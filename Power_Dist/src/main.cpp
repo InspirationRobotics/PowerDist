@@ -3,6 +3,11 @@
 #include <SPI.h>
 #include <SD.h>
 
+#include <Adafruit_PCT2075.h>
+
+Adafruit_PCT2075 MCTherm;
+Adafruit_PCT2075 RegTherm;
+
 #define BATT_1_VSENSE A1
 #define BATT_1_CURR A2
 #define BATT_1_INT 3
@@ -34,9 +39,18 @@ void setup() {
   }
   file = SD.open("log.txt", FILE_WRITE);
   
+  // Initialize Thermometers
+  if (!MCTherm.begin(0x48, &Wire))
+    file.println("MCTherm init failed\n");
+  // if (!RegTherm.begin(0x37, &Wire))
+  //   file.println("RegTherm init failed\n");
+
 }
 
 void loop() {
+
+  // MCTherm.getTemperature();
+  // RegTherm.getTemperature();
 
   updateSD();
 }

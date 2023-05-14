@@ -54,6 +54,15 @@ bool dualLowErrorFlag;
 bool MCThermErrorFlag;
 bool RegThermErrorFlag;
 
+// Buzzer stuff
+bool buzzOn;
+uint16_t buzzerIntervalLive; 
+unsigned long prevBuzz;
+#define BUZZ_INTERVAL_RAPID   500000
+#define BUZZ_INTERVAL_SLOW    200000
+#define BUZZ_FULL             1
+#define BUZZ_OFF              0
+
 void updateSD();
 float calcVBatt(float vsense);
 void batt1ISR();
@@ -80,8 +89,8 @@ void setup() {
   pinMode(A5_SENSE, INPUT);
   pinMode(A5_SENSE, BUZZER);
 
-  // attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
-  // attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
 
   batt1On = false;
   batt2On = false;
@@ -108,6 +117,9 @@ void setup() {
   dualLowErrorFlag = false;
   MCThermErrorFlag = false;
   RegThermErrorFlag = false;
+  buzzerIntervalLive = BUZZ_OFF;
+  buzzOn = false;
+  prevBuzz = micros();
 
   sdPrevUpdate = micros();
 
@@ -182,6 +194,18 @@ void loop() {
   // else {
   //   RegThermErrorFlag = false;
   // }
+
+    if (buzzerIntervalLive == BUZZ_FULL) {
+      digitalWrite(BUZZER, HIGH);
+    }
+    else if (buzzerIntervalLive == BUZZ_OFF) {
+      digitalWrite(BUZZER, LOW);
+    }
+    else if ((micros() - prevBuzz) > buzzerIntervalLive) {
+      prevBuzz = micros();
+      buzzOn = !buzzOn;
+      digitalWrite(BUZZER, buzzOn);
+    }
 
   // if (micros() - sdPrevUpdate > 100)
   //   updateSD();

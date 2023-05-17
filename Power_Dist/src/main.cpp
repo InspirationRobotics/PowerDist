@@ -5,8 +5,7 @@
 
 #include <Adafruit_PCT2075.h>
 
-Adafruit_PCT2075 MCTherm;
-Adafruit_PCT2075 RegTherm;
+#include <BuzzerTimer.h>
 
 // Pin Definitions
 #define BATT_1_VSENSE A1
@@ -40,57 +39,28 @@ bool batt2Installed;
 float batt1V;
 float batt2V;
 
+bool dualLowErrorFlag;
+
 #define SWITCHING_GRACE 1000000 // isr trigger grace period in micros
 volatile bool ISR_Override;
 volatile unsigned long prevSwitchTime;
 
-// error flags
-bool dualLowErrorFlag;
+
+Adafruit_PCT2075 MCTherm;
+Adafruit_PCT2075 RegTherm;
 bool MCThermErrorFlag;
 bool RegThermErrorFlag;
 
 // Buzzer stuff
 bool buzzOn;
-unsigned long buzzerIntervalLive; 
 unsigned long prevBuzz;
-#define BUZZ_INTERVAL_RAPID   200000
-#define BUZZ_INTERVAL_SLOW    1000000
+#define BUZZ_INTERVAL_RAPID   100000
+#define BUZZ_INTERVAL_SLOW    200000
 #define BUZZ_FULL             1
 #define BUZZ_OFF              0
 
-class Timer {
-  public:
-    Timer();
-    void set(unsigned long interval, unsigned long repetitionsRequired, bool onOff=true) {
-      _interval = interval;
-      _repetitionsRequired = repetitionsRequired * (onOff ? 2 : 1);
-      _repetitionsLive = 0;
-      _intervalMetFlag = false;
-      _prevTime = micros();
-    }
-    bool timeUp() {
-      if ((micros() - _prevTime) > _interval && !_intervalMetFlag && _repetitionsLive < _repetitionsRequired) {
-        _prevTime = micros();
-        _intervalMetFlag = true;
-        _repetitionsLive++;
-        return true;
-      }
-      else {
-        _intervalMetFlag = false;
-      }
-      return false;
-    }
-  private:
-    unsigned long _prevTime;
-    unsigned long _interval;
-    unsigned long _repetitionsRequired;
-    unsigned long _repetitionsLive;
-    unsigned long _intervalMetFlag;
-};
+BuzzerTimer buzzerTimer;
 
-Timer buzzerTimer;
-
-void updateSD();
 float calcVBatt(float vsense);
 void batt1ISR();
 void batt2ISR();
@@ -126,16 +96,20 @@ void setup() {
   Serial.println("Read Batt 1:" + String(batt1V));
   Serial.println("Read Batt 2:" + String(batt2V));
 
+  buffer = "";
+
   // Not equal to because there is a possibility that neither battery is actually plugged in (just mcu)
   if (batt1V > batt2V) {
     digitalWrite(BATT_1_CTL, HIGH);
     batt1On = true;
     Serial.println("Selected batt 1!");
+    buffer += "Selected batt 1 at init";
   }
   else {
     digitalWrite(BATT_2_CTL, HIGH);
     batt2On = true;
     Serial.println("Selected batt 2!");
+    buffer += "Selected batt 2 at init";
   }
 
   prevSwitchTime = micros();
@@ -144,8 +118,7 @@ void setup() {
   dualLowErrorFlag = false;
   MCThermErrorFlag = false;
   RegThermErrorFlag = false;
-  buzzerIntervalLive = BUZZ_OFF;
-  buzzOn = false;
+  buzzOn = true;
   prevBuzz = micros();
 
   sdPrevUpdate = micros();
@@ -154,13 +127,19 @@ void setup() {
   if (!SD.begin(SD_CS)) {
     Serial.println("Connection to SD Card failed");
   }
+  if (SD.exists("log.txt"))
+    SD.remove("log.txt");
   file = SD.open("log.txt", FILE_WRITE);
   
   // Initialize Thermometers
-  if (!MCTherm.begin(0x48, &Wire))
-    file.println("MCTherm init failed\n");
+  if (!MCTherm.begin(0x48, &Wire)) {
+    file.println("MCTherm init failed");
+  }
   if (!RegTherm.begin(0x37, &Wire))
-    file.println("RegTherm init failed\n");
+    file.println("RegTherm init failed");
+
+  buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
+  file.flush();
 }
 
 void loop() {
@@ -177,12 +156,14 @@ void loop() {
         batt2On = false;
         prevSwitchTime = micros();
         Serial.println("Selected Batt 1!");
+        buffer += "Batt 1 was reinstalled charged; switching there";
       }
       if (batt2V > BATT_EMPTY) {
         digitalWrite(BATT_1_CTL, LOW);
         batt1On = false;
         prevSwitchTime = micros();
         Serial.println("Selected Batt 2!");
+        buffer += "Batt 2 was reinstalled charged; switching there";
       }
     }
 
@@ -192,14 +173,15 @@ void loop() {
       batt2On = true;
       prevSwitchTime = micros();
       Serial.println("Switched to batt 2!");
+      buffer += "Switching to batt 2";
       if (batt2V > BATT_EMPTY) {
         digitalWrite(BATT_1_CTL, LOW);
         batt1On = false;
         prevSwitchTime = micros();
-        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 4);
+        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
       }
       else {
-        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
+        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
       }
       ISR_Override = false;
     }
@@ -209,15 +191,15 @@ void loop() {
       batt1On = true;
       prevSwitchTime = micros();
       Serial.println("Switched to batt 1!");
-
+      buffer += "Switching to batt 1";
       if (batt1V > BATT_EMPTY) {
         digitalWrite(BATT_2_CTL, LOW);
         batt2On = false;
         prevSwitchTime = micros();
-        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 4);
+        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
       }
       else {
-        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
+        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
       }
       ISR_Override = false;
     }
@@ -227,7 +209,7 @@ void loop() {
   // Errors
   if (batt1Installed && batt1V < BATT_EMPTY && batt2Installed && batt2V < BATT_EMPTY) {
     if (!dualLowErrorFlag) {
-      buffer += "Both batteries empty\n";
+      buffer += "Both batteries empty";
       dualLowErrorFlag = true;
     }
   }
@@ -237,8 +219,9 @@ void loop() {
 
   if (MCTherm.getTemperature() > MAX_TEMP) {
     if (!MCThermErrorFlag) {
-      buffer += "MC Thermometer logged: " + (String)MCTherm.getTemperature() + "\n";
+      buffer += "MC Thermometer logged: " + (String)MCTherm.getTemperature();
       MCThermErrorFlag = true;
+      buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
     }
   }
   else {
@@ -247,8 +230,9 @@ void loop() {
 
   if (RegTherm.getTemperature() > MAX_TEMP) {
     if (!RegThermErrorFlag) {
-      buffer += "Reg Thermometer logged: " + (String)RegTherm.getTemperature() + "\n";
+      buffer += "Reg Thermometer logged: " + (String)RegTherm.getTemperature();
       RegThermErrorFlag = true;
+      buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
     }
   }
   else {
@@ -262,17 +246,16 @@ void loop() {
   }
 
 
-  if (micros() - sdPrevUpdate > 100)
-    updateSD();
-}
-
-
-// Idea is the log everything to the buffer variable and then to `updateSD()` at the end of the loop to save time
-void updateSD(void) {
-  if (buffer.length() > 0) {
-    file.println(buffer);
+  if (micros() - sdPrevUpdate > 1000000) {
+    if (buffer.length() > 0) {
+      file.println(buffer);
+      file.flush();
+      buffer.remove(0);
+    }
+    sdPrevUpdate = micros();
   }
-  buffer.remove(0);
+
+  // Serial.println(analogRead((((BATT_1_CURR) / 1048) * 3.3) - 2.5) * 50);
 }
 
 void batt1ISR() {

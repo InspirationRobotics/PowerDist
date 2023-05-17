@@ -1,0 +1,536 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+<h2>KiBoM PCB Bill of Materials</h2>
+<table border="1">
+<tr><td>Source File</td><td>1.0.kicad_sch</td></tr>
+<tr><td>BoM Date</td><td>Friday, January 27, 2023 at 11:13:58 AM</td></tr>
+<tr><td>Schematic Version</td><td>1.0</td></tr>
+<tr><td>Schematic Date</td><td>2023-01-11</td></tr>
+<tr><td>PCB Variant</td><td>default</td></tr>
+<tr><td>KiCad Version</td><td>Eeschema (6.0.10-0)</td></tr>
+<tr><td>Component Groups</td><td>38</td></tr>
+<tr><td>Component Count (per PCB)</td><td>135</td></tr>
+<tr><td>Fitted Components (per PCB)</td><td>135</td></tr>
+<tr><td>Number of PCBs</td><td>1</td></tr>
+<tr><td>Total Component Count<br>(for 1 PCBs)</td><td>135</td></tr>
+</table>
+<br>
+<h2>Component Groups</h2>
+<p style="background-color: #FFE6B3">KiCad Fields (default)</p>
+<p style="background-color: #E6FFEE">Generated Fields</p>
+<p style="background-color: #E6F9FF">User Fields</p>
+<p style="background-color: #FF8080">Empty Fields</p>
+<table border="1">
+<tr>
+	<th></th>
+	<th align="center" bgcolor="#FFE6B3">Description</th>
+	<th align="center" bgcolor="#FFE6B3">Part</th>
+	<th align="center" bgcolor="#FFE6B3">References</th>
+	<th align="center" bgcolor="#FFE6B3">Value</th>
+	<th align="center" bgcolor="#FFE6B3">Footprint</th>
+	<th align="center" bgcolor="#E6FFEE">Quantity Per PCB</th>
+	<th align="center" bgcolor="#FFE6B3">Datasheet</th>
+	<th align="center" bgcolor="#E6F9FF">PN</th>
+	<th align="center" bgcolor="#E6F9FF">digikey_link</th>
+	<th align="center" bgcolor="#E6F9FF">Link</th>
+</tr>
+<tr>
+	<td align="center">1</td>
+	<td align="center" bgcolor=#FFE6B3>Unpolarized capacitor</td>
+	<td align="center" bgcolor=#FFE6B3>C</td>
+	<td align="center" bgcolor=#FFE6B3>C3 C7 C29 C30</td>
+	<td align="center" bgcolor=#FFE6B3>0.1uF</td>
+	<td align="center" bgcolor=#FFE6B3>C_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>4</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">2</td>
+	<td align="center" bgcolor=#FFE6B3>Unpolarized capacitor</td>
+	<td align="center" bgcolor=#FFE6B3>C</td>
+	<td align="center" bgcolor=#FFE6B3>C2 C4 C8</td>
+	<td align="center" bgcolor=#FFE6B3>1uF</td>
+	<td align="center" bgcolor=#FFE6B3>C_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">3</td>
+	<td align="center" bgcolor=#FFE6B3>Unpolarized capacitor</td>
+	<td align="center" bgcolor=#FFE6B3>C</td>
+	<td align="center" bgcolor=#FFE6B3>C1 C14 C15 C16 C20 C21 C22 C26 C27 C28</td>
+	<td align="center" bgcolor=#FFE6B3>10uF</td>
+	<td align="center" bgcolor=#FFE6B3>C_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>10</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#E6F9FF>100,000,013</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">4</td>
+	<td align="center" bgcolor=#FFE6B3>Unpolarized capacitor</td>
+	<td align="center" bgcolor=#FFE6B3>C</td>
+	<td align="center" bgcolor=#FFE6B3>C11 C12 C13 C17 C18 C19 C23 C24 C25</td>
+	<td align="center" bgcolor=#FFE6B3>10uF</td>
+	<td align="center" bgcolor=#FFE6B3>C_2012_805_B</td>
+	<td align="center" bgcolor=#E6FFEE>9</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#E6F9FF>100,000,013</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">5</td>
+	<td align="center" bgcolor=#FFE6B3>Polarized capacitor</td>
+	<td align="center" bgcolor=#FFE6B3>CP</td>
+	<td align="center" bgcolor=#FFE6B3>C5 C6 C9 C10</td>
+	<td align="center" bgcolor=#FFE6B3>470uF</td>
+	<td align="center" bgcolor=#FFE6B3>THT_470uF_Cap</td>
+	<td align="center" bgcolor=#E6FFEE>4</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://api.kemet.com/component-edge/download/datasheet/ESK477M025AH1AA.pdf">https://api.kemet.com/component-edge/download/datasheet/ESK477M025AH1AA.pdf</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">6</td>
+	<td align="center" bgcolor=#FFE6B3>Schottky diode</td>
+	<td align="center" bgcolor=#FFE6B3>D_Schottky</td>
+	<td align="center" bgcolor=#FFE6B3>D1 D2</td>
+	<td align="center" bgcolor=#FFE6B3>D_Schottky</td>
+	<td align="center" bgcolor=#FFE6B3>D_SOD-323</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">7</td>
+	<td align="center" bgcolor=#FFE6B3>Light emitting diode</td>
+	<td align="center" bgcolor=#FFE6B3>LED</td>
+	<td align="center" bgcolor=#FFE6B3>D3 D4 D5 D6 D7 D8 D9 D10</td>
+	<td align="center" bgcolor=#FFE6B3>LED</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>8</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">8</td>
+	<td align="center" bgcolor=#FFE6B3>ARM Microcontrollers - MCU 256KB 32KB 48QFN GRN1.6-3.6V48MHz</td>
+	<td align="center" bgcolor=#FFE6B3>ATSAMD21G18A-MUT</td>
+	<td align="center" bgcolor=#FFE6B3>IC2</td>
+	<td align="center" bgcolor=#FFE6B3>ATSAMD21G18A-MUT</td>
+	<td align="center" bgcolor=#FFE6B3>QFN50P700X700X90-49N-D</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://datasheet.datasheetarchive.com/originals/distributors/DKDS41/DSANUWW0026743.pdf">https://datasheet.datasheetarchive.com/originals/distributors/DKDS41/DSANUWW0026743.pdf</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#E6F9FF>160-1446-2-ND</td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">9</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>GD25Q16CWIGR</td>
+	<td align="center" bgcolor=#FFE6B3>IC1</td>
+	<td align="center" bgcolor=#FFE6B3>GD25Q16CWIGR</td>
+	<td align="center" bgcolor=#FFE6B3>PSON50P200X300X50-9N</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://ms.componentsearchengine.com/Datasheets/1/GD25Q16CWIGR.pdf">https://ms.componentsearchengine.com/Datasheets/1/GD25Q16CWIGR.pdf</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">10</td>
+	<td align="center" bgcolor=#FFE6B3>USB Type A connector</td>
+	<td align="center" bgcolor=#FFE6B3>USB_A</td>
+	<td align="center" bgcolor=#FFE6B3>J2</td>
+	<td align="center" bgcolor=#FFE6B3>USB_A</td>
+	<td align="center" bgcolor=#FFE6B3>amphenol_micro_usb_no_flange_10118192</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">11</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>header_01x04</td>
+	<td align="center" bgcolor=#FFE6B3>J5 J6</td>
+	<td align="center" bgcolor=#FFE6B3>header_01x04</td>
+	<td align="center" bgcolor=#FFE6B3>Stemma_QT_2</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">12</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>header_01x05</td>
+	<td align="center" bgcolor=#FFE6B3>J1</td>
+	<td align="center" bgcolor=#FFE6B3>header_01x05</td>
+	<td align="center" bgcolor=#FFE6B3>header_01x05_pitch2.54_tht</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">13</td>
+	<td align="center" bgcolor=#FFE6B3>uSD Card connector</td>
+	<td align="center" bgcolor=#FFE6B3>uSDCard</td>
+	<td align="center" bgcolor=#FFE6B3>J7</td>
+	<td align="center" bgcolor=#FFE6B3>uSDCard</td>
+	<td align="center" bgcolor=#FFE6B3>uSDCard_SD_503182_011</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FFE6B3>x-devonthink-item://89382DC3-A8BA-4AFE-B050-E9E1112677D4</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">14</td>
+	<td align="center" bgcolor=#FFE6B3>Net tie, 4 pins</td>
+	<td align="center" bgcolor=#FFE6B3>Net-Tie_4</td>
+	<td align="center" bgcolor=#FFE6B3>NT1</td>
+	<td align="center" bgcolor=#FFE6B3>Net-Tie_4</td>
+	<td align="center" bgcolor=#FFE6B3>NetTie-4_SMD_Pad2.0mm</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">15</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>CONN_1</td>
+	<td align="center" bgcolor=#FFE6B3>P1 P2</td>
+	<td align="center" bgcolor=#FFE6B3>CONN_1</td>
+	<td align="center" bgcolor=#FFE6B3>header_01x01_tht</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">16</td>
+	<td align="center" bgcolor=#FFE6B3>NPN transistor, base/emitter/collector</td>
+	<td align="center" bgcolor=#FFE6B3>BC847</td>
+	<td align="center" bgcolor=#FFE6B3>Q1 Q2 Q4 Q8</td>
+	<td align="center" bgcolor=#FFE6B3>BC847</td>
+	<td align="center" bgcolor=#FFE6B3>SOT-23</td>
+	<td align="center" bgcolor=#E6FFEE>4</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#E6F9FF>400,000,003</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">17</td>
+	<td align="center" bgcolor=#FFE6B3>N-MOSFET transistor, source/gate/drain</td>
+	<td align="center" bgcolor=#FFE6B3>Q_NMOS_SGD</td>
+	<td align="center" bgcolor=#FFE6B3>Q3 Q5</td>
+	<td align="center" bgcolor=#FFE6B3>PMOS_SGD</td>
+	<td align="center" bgcolor=#FFE6B3>VDFN-8</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://www.ti.com/lit/ds/symlink/csd25404q3.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1673399419393&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fcsd25404q3">https://www.ti.com/lit/ds/symlink/csd25404q3.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1673399419393&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fcsd25404q3</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">18</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R38 R39 R40 R41 R42 R43 R44 R45 R46 R47</td>
+	<td align="center" bgcolor=#FFE6B3>300</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>10</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">19</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R5 R9 R15 R16</td>
+	<td align="center" bgcolor=#FFE6B3>470</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>4</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">20</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R8 R11 R22 R24 R51 R52</td>
+	<td align="center" bgcolor=#FFE6B3>500</td>
+	<td align="center" bgcolor=#FFE6B3>R_2012_805_B</td>
+	<td align="center" bgcolor=#E6FFEE>6</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">21</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R3 R4 R12 R13 R25 R26 R50</td>
+	<td align="center" bgcolor=#FFE6B3>1k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>7</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">22</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R7 R10 R18 R20 R21 R23</td>
+	<td align="center" bgcolor=#FFE6B3>4k7</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>6</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">23</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R1 R2 R6 R14 R48 R49 R53</td>
+	<td align="center" bgcolor=#FFE6B3>10k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>7</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#E6F9FF>200,000,004</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">24</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R17 R19</td>
+	<td align="center" bgcolor=#FFE6B3>22k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">25</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R33 R35 R37</td>
+	<td align="center" bgcolor=#FFE6B3>32.4k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">26</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R29 R30 R31</td>
+	<td align="center" bgcolor=#FFE6B3>75k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">27</td>
+	<td align="center" bgcolor=#FFE6B3>Resistor</td>
+	<td align="center" bgcolor=#FFE6B3>R</td>
+	<td align="center" bgcolor=#FFE6B3>R32 R34 R36</td>
+	<td align="center" bgcolor=#FFE6B3>102k</td>
+	<td align="center" bgcolor=#FFE6B3>R_1608_603_B</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080>~</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">28</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>buzzer</td>
+	<td align="center" bgcolor=#FFE6B3>SP1 SP2</td>
+	<td align="center" bgcolor=#FFE6B3>buzzer</td>
+	<td align="center" bgcolor=#FFE6B3>13-9mm_Buzzer</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">29</td>
+	<td align="center" bgcolor=#FFE6B3>Push button switch, generic, two pins</td>
+	<td align="center" bgcolor=#FFE6B3>SW_Push</td>
+	<td align="center" bgcolor=#FFE6B3>SW1</td>
+	<td align="center" bgcolor=#FFE6B3>SW_Push</td>
+	<td align="center" bgcolor=#FFE6B3>CK_PTS645_SMD</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">30</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>ACS781_1</td>
+	<td align="center" bgcolor=#FFE6B3>U2 U3</td>
+	<td align="center" bgcolor=#FFE6B3>ACS781</td>
+	<td align="center" bgcolor=#FFE6B3>7-LR-PSOF</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">31</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>ARM-SWD-10</td>
+	<td align="center" bgcolor=#FFE6B3>U1</td>
+	<td align="center" bgcolor=#FFE6B3>ARM-SWD-10</td>
+	<td align="center" bgcolor=#FFE6B3>ARM-SWD-10</td>
+	<td align="center" bgcolor=#E6FFEE>1</td>
+	<td align="center" bgcolor=#FFE6B3><a href="http://suddendocs.samtec.com/catalog_english/ftsh_smt.pdf">http://suddendocs.samtec.com/catalog_english/ftsh_smt.pdf</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#E6F9FF><a href="https://www.digikey.com/en/products/detail/samtec-inc/FTSH-105-01-L-DV-K/1875039">https://www.digikey.com/en/products/detail/samtec-inc/FTSH-105-01-L-DV-K/1875039</a></td>
+</tr>
+<tr>
+	<td align="center">32</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>LM1085_2</td>
+	<td align="center" bgcolor=#FFE6B3>U10 U11 U12</td>
+	<td align="center" bgcolor=#FFE6B3>LM1085-3.0</td>
+	<td align="center" bgcolor=#FFE6B3>TO-263-3_TabPin2</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm1085">https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm1085</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">33</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>LM1085_1</td>
+	<td align="center" bgcolor=#FFE6B3>U7 U8 U9</td>
+	<td align="center" bgcolor=#FFE6B3>LM1085-5.0</td>
+	<td align="center" bgcolor=#FFE6B3>TO-263-3_TabPin2</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FFE6B3><a href="https://www.ti.com/lit/ds/symlink/lm1085.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1674503286246&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Flm1085">https://www.ti.com/lit/ds/symlink/lm1085.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1674503286246&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Flm1085</a></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">34</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>MPM3610_1</td>
+	<td align="center" bgcolor=#FFE6B3>U4 U5 U6</td>
+	<td align="center" bgcolor=#FFE6B3>MPM3610</td>
+	<td align="center" bgcolor=#FFE6B3>20-PowerLQFN</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">35</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>PCT2075</td>
+	<td align="center" bgcolor=#FFE6B3>U13 U14</td>
+	<td align="center" bgcolor=#FFE6B3>PCT2075</td>
+	<td align="center" bgcolor=#FFE6B3>PCT2075TP_147</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">36</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>U15 U16</td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>AMASS_XT90PW-M_Horizontal</td>
+	<td align="center" bgcolor=#E6FFEE>2</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">37</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>U17 U18 U19 U20 U21 U22</td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>AMASS_XT30U-F_1x02_P5.0mm_Vertical</td>
+	<td align="center" bgcolor=#E6FFEE>6</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+<tr>
+	<td align="center">38</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>U23 U24 U25</td>
+	<td align="center" bgcolor=#FFE6B3>XT90PW-M</td>
+	<td align="center" bgcolor=#FFE6B3>AMASS_XT60-F_1x02_P7.20mm_Vertical</td>
+	<td align="center" bgcolor=#E6FFEE>3</td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+	<td align="center" bgcolor=#FF8080></td>
+</tr>
+</table>
+<br><br>
+</body></html>

@@ -1,0 +1,55 @@
+Component,Description,Part,References,Value,Footprint,Quantity Per PCB,Datasheet,PN,Arrow Part Number,Arrow Price/Stock,Height,Manufacturer_Name,Manufacturer_Part_Number,Mouser Part Number,Mouser Price/Stock,Link
+1,Unpolarized capacitor,C,C3 C7 C29 C30,0.1uF,C_1608_603_B,4,~,,,,,,,,,
+2,Unpolarized capacitor,C,C2 C4 C8,1uF,C_1608_603_B,3,~,,,,,,,,,
+3,Unpolarized capacitor,C,C1 C14 C15 C16 C20 C21 C22 C26 C27 C28,10uF,C_1608_603_B,10,~,"100,000,013",,,,,,,,
+4,Unpolarized capacitor,C,C11 C12 C13 C17 C18 C19 C23 C24 C25,10uF,C_2012_805_B,9,~,"100,000,013",,,,,,,,
+5,Polarized capacitor,CP,C5 C6 C9 C10,470uF,THT_470uF_Cap,4,https://api.kemet.com/component-edge/download/datasheet/ESK477M025AH1AA.pdf,,,,,,,,,
+6,Schottky diode,D_Schottky,D1 D2,D_Schottky,D_SOD-323,2,~,,,,,,,,,
+7,Light emitting diode,LED,D3 D4 D5 D6 D7 D8 D9 D10,LED,R_1608_603_B,8,~,,,,,,,,,
+8,ARM Microcontrollers - MCU 256KB 32KB 48QFN GRN1.6-3.6V48MHz,ATSAMD21G18A-MUT,IC2,ATSAMD21G18A-MUT,QFN50P700X700X90-49N-D,1,https://datasheet.datasheetarchive.com/originals/distributors/DKDS41/DSANUWW0026743.pdf,,ATSAMD21G18A-MUT,https://www.arrow.com/en/products/atsamd21g18a-mut/microchip-technology?region=nac,0.9,Microchip,ATSAMD21G18A-MUT,556-ATSAMD21G18A-MUT,https://www.mouser.co.uk/ProductDetail/Microchip-Technology-Atmel/ATSAMD21G18A-MUT?qs=KLFHFgXTQiDo7jS6LIAbqg%3D%3D,
+9,,GD25Q16CWIGR,IC1,GD25Q16CWIGR,PSON50P200X300X50-9N,1,https://ms.componentsearchengine.com/Datasheets/1/GD25Q16CWIGR.pdf,,,,0.8,GigaDevice,GD25Q16CWIGR,363-GD25Q16CWIGR,https://www.mouser.co.uk/ProductDetail/GigaDevice/GD25Q16CWIGR?qs=RcG8xmE7yp1dgxRTSLG3FQ%3D%3D,
+10,USB Type A connector,USB_A,J2,USB_A,amphenol_micro_usb_no_flange_10118192,1,,,,,,,,,,
+11,,header_01x04,J5 J6,header_01x04,Stemma_QT_2,2,,,,,,,,,,
+12,,header_01x05,J1,header_01x05,header_01x05_pitch2.54_tht,1,,,,,,,,,,
+13,uSD Card connector,uSDCard,J7,uSDCard,uSDCard_SD_503182_011,1,x-devonthink-item://89382DC3-A8BA-4AFE-B050-E9E1112677D4,,,,,,,,,
+14,"Net tie, 4 pins",Net-Tie_4,NT1,Net-Tie_4,NetTie-4_SMD_Pad2.0mm,1,~,,,,,,,,,
+15,,CONN_1,P1 P2,CONN_1,header_01x01_tht,2,,,,,,,,,,
+16,"NPN transistor, base/emitter/collector",BC847,Q1 Q2 Q4 Q8,BC847,SOT-23,4,~,"400,000,003",,,,,,,,
+17,"N-MOSFET transistor, source/gate/drain",Q_NMOS_SGD,Q3 Q5,PMOS_SGD,VDFN-8,2,https://www.ti.com/lit/ds/symlink/csd25404q3.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1673399419393&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Fcsd25404q3,,,,,,,,,
+18,Resistor,R,R38 R39 R40 R41 R42 R43 R44 R45 R46 R47,300,R_1608_603_B,10,~,,,,,,,,,
+19,Resistor,R,R5 R9 R15 R16,470,R_1608_603_B,4,~,,,,,,,,,
+20,Resistor,R,R8 R11 R22 R24 R51 R52,500,R_2012_805_B,6,~,,,,,,,,,
+21,Resistor,R,R3 R4 R12 R13 R25 R26 R50,1k,R_1608_603_B,7,~,,,,,,,,,
+22,Resistor,R,R7 R10 R18 R20 R21 R23,4k7,R_1608_603_B,6,~,,,,,,,,,
+23,Resistor,R,R1 R2 R6 R14 R48 R49 R53,10k,R_1608_603_B,7,~,"200,000,004",,,,,,,,
+24,Resistor,R,R17 R19,22k,R_1608_603_B,2,~,,,,,,,,,
+25,Resistor,R,R33 R35 R37,32.4k,R_1608_603_B,3,~,,,,,,,,,
+26,Resistor,R,R29 R30 R31,75k,R_1608_603_B,3,~,,,,,,,,,
+27,Resistor,R,R32 R34 R36,102k,R_1608_603_B,3,~,,,,,,,,,
+28,,buzzer,SP1 SP2,buzzer,13-9mm_Buzzer,2,,,,,,,,,,
+29,"Push button switch, generic, two pins",SW_Push,SW1,SW_Push,CK_PTS645_SMD,1,,,,,,,,,,
+30,,ACS781_1,U2 U3,ACS781,7-LR-PSOF,2,,,,,,,,,,
+31,,ARM-SWD-10,U1,ARM-SWD-10,ARM-SWD-10,1,http://suddendocs.samtec.com/catalog_english/ftsh_smt.pdf,,,,,,,,,https://www.digikey.com/en/products/detail/samtec-inc/FTSH-105-01-L-DV-K/1875039
+32,,LM1085_2,U10 U11 U12,LM1085-3.0,TO-263-3_TabPin2,3,https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Flm1085,,,,,,,,,
+33,,LM1085_1,U7 U8 U9,LM1085-5.0,TO-263-3_TabPin2,3,https://www.ti.com/lit/ds/symlink/lm1085.pdf?HQS=dis-dk-null-digikeymode-dsf-pf-null-wwe&ts=1674503286246&ref_url=https%253A%252F%252Fwww.ti.com%252Fgeneral%252Fdocs%252Fsuppproductinfo.tsp%253FdistId%253D10%2526gotoUrl%253Dhttps%253A%252F%252Fwww.ti.com%252Flit%252Fgpn%252Flm1085,,,,,,,,,
+34,,MPM3610_1,U4 U5 U6,MPM3610,20-PowerLQFN,3,,,,,,,,,,
+35,,PCT2075,U13 U14,PCT2075,PCT2075TP_147,2,,,,,,,,,,
+36,,XT90PW-M,U15 U16,XT90PW-M,AMASS_XT90PW-M_Horizontal,2,,,,,,,,,,
+37,,XT90PW-M,U17 U18 U19 U20 U21 U22,XT90PW-M,AMASS_XT30U-F_1x02_P5.0mm_Vertical,6,,,,,,,,,,
+38,,XT90PW-M,U23 U24 U25,XT90PW-M,AMASS_XT60-F_1x02_P7.20mm_Vertical,3,,,,,,,,,,
+
+
+
+
+
+Component Groups:,38
+Component Count:,135
+Fitted Components:,135
+Number of PCBs:,1
+Total components:,135
+Schematic Version:,1.0
+Schematic Date:,2023-01-11
+PCB Variant:,default
+BoM Date:,"Friday, January 27, 2023 at 11:06:49 AM"
+Schematic Source:,1.0.kicad_sch
+KiCad Version:,Eeschema (6.0.10-0)

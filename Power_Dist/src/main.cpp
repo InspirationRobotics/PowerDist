@@ -11,7 +11,7 @@ Adafruit_PCT2075 RegTherm;
 // Pin Definitions
 #define BATT_1_VSENSE A1
 #define BATT_1_CURR A2
-#define BATT_1_INT 3
+#define BATT_1_INT 4
 #define BATT_1_CTL 10
 
 #define BATT_2_VSENSE A4
@@ -33,21 +33,16 @@ String buffer;
 
 unsigned long sdPrevUpdate;
 
-bool batt1On;
-bool batt2On;
-volatile bool batt1Installed;
-volatile bool batt2Installed;
+volatile bool batt1On;
+volatile bool batt2On;
+bool batt1Installed;
+bool batt2Installed;
 float batt1V;
 float batt2V;
 
-#define ISR_GRACE 1000000 // isr trigger grace period in micros
-typedef struct ISRProtect {
-  unsigned long prevBatt1ISRTime;
-  unsigned long prevBatt2ISRTime;
-  unsigned long prevSwitchTime;
-};
-
-volatile ISRProtect isrTimers; 
+#define SWITCHING_GRACE 1000000 // isr trigger grace period in micros
+volatile bool ISR_Override;
+volatile unsigned long prevSwitchTime;
 
 // error flags
 bool dualLowErrorFlag;
@@ -56,10 +51,10 @@ bool RegThermErrorFlag;
 
 // Buzzer stuff
 bool buzzOn;
-uint16_t buzzerIntervalLive; 
+unsigned long buzzerIntervalLive; 
 unsigned long prevBuzz;
-#define BUZZ_INTERVAL_RAPID   500000
-#define BUZZ_INTERVAL_SLOW    200000
+#define BUZZ_INTERVAL_RAPID   200000
+#define BUZZ_INTERVAL_SLOW    1000000
 #define BUZZ_FULL             1
 #define BUZZ_OFF              0
 
@@ -68,6 +63,7 @@ float calcVBatt(float vsense);
 void batt1ISR();
 void batt2ISR();
 void pollBatteries();
+bool inSwitchingTimeout();
 
 void setup() {
   Serial.begin(9600);
@@ -89,8 +85,8 @@ void setup() {
   pinMode(A5_SENSE, INPUT);
   pinMode(A5_SENSE, BUZZER);
 
-  attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
+  // attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
+  // attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
 
   batt1On = false;
   batt2On = false;
@@ -110,9 +106,8 @@ void setup() {
     Serial.println("Selected batt 2!");
   }
 
-  isrTimers.prevBatt1ISRTime = micros();
-  isrTimers.prevBatt2ISRTime = micros();
-  isrTimers.prevSwitchTime = micros();
+  prevSwitchTime = micros();
+  ISR_Override = false;
 
   dualLowErrorFlag = false;
   MCThermErrorFlag = false;
@@ -122,93 +117,117 @@ void setup() {
   prevBuzz = micros();
 
   sdPrevUpdate = micros();
-
-  // if (!SD.begin(SD_CS)) {
-  //   Serial.println("Connection to SD Card failed");
-  // }
-  // file = SD.open("log.txt", FILE_WRITE);
   
-  // // Initialize Thermometers
-  // if (!MCTherm.begin(0x48, &Wire))
-  //   file.println("MCTherm init failed\n");
-  // if (!RegTherm.begin(0x37, &Wire))
-  //   file.println("RegTherm init failed\n");
+
+  if (!SD.begin(SD_CS)) {
+    Serial.println("Connection to SD Card failed");
+  }
+  file = SD.open("log.txt", FILE_WRITE);
+  
+  // Initialize Thermometers
+  if (!MCTherm.begin(0x48, &Wire))
+    file.println("MCTherm init failed\n");
+  if (!RegTherm.begin(0x37, &Wire))
+    file.println("RegTherm init failed\n");
 }
 
 void loop() {
 
   pollBatteries();
-  // Serial.println("Read Batt 1:" + String(batt1V));
-  // Serial.println("Read Batt 2:" + String(batt2V));
 
-  if (batt1On && batt1V < BATT_EMPTY && batt2Installed && !batt2On) {
-    digitalWrite(BATT_2_CTL, HIGH);
-    batt2On = true;
-    isrTimers.prevSwitchTime = micros();
-    Serial.println("Switched to batt 2!");
-    if (batt2V > BATT_EMPTY) {
-      digitalWrite(BATT_1_CTL, LOW);
-      batt1On = false;
-      isrTimers.prevSwitchTime = micros();
+
+  if (!inSwitchingTimeout()) {
+
+    // In the case that both batteries dropped low and then one was replaced
+    if (batt1On && batt2On) {
+      if (batt1V > BATT_EMPTY) {
+        digitalWrite(BATT_2_CTL, LOW);
+        batt2On = false;
+        prevSwitchTime = micros();
+        Serial.println("Selected Batt 1!");
+      }
+      if (batt2V > BATT_EMPTY) {
+        digitalWrite(BATT_1_CTL, LOW);
+        batt1On = false;
+        prevSwitchTime = micros();
+        Serial.println("Selected Batt 2!");
+      }
+    }
+
+    if (batt1On && batt1V < BATT_EMPTY && batt2Installed && !batt2On) {
+      ISR_Override = true;
+      digitalWrite(BATT_2_CTL, HIGH);
+      batt2On = true;
+      prevSwitchTime = micros();
+      Serial.println("Switched to batt 2!");
+      if (batt2V > BATT_EMPTY) {
+        digitalWrite(BATT_1_CTL, LOW);
+        batt1On = false;
+        prevSwitchTime = micros();
+      }
+      ISR_Override = false;
+    }
+    if (batt2On && batt2V < BATT_EMPTY && batt1Installed && !batt1On) {
+      ISR_Override = true;
+      digitalWrite(BATT_1_CTL, HIGH);
+      batt1On = true;
+      prevSwitchTime = micros();
+      Serial.println("Switched to batt 1!");
+      if (batt1V > BATT_EMPTY) {
+        digitalWrite(BATT_2_CTL, LOW);
+        batt2On = false;
+        prevSwitchTime = micros();
+      }
+      ISR_Override = false;
+    }
+
+  }
+
+  // Errors
+  if (batt1Installed && batt1V < BATT_EMPTY && batt2Installed && batt2V < BATT_EMPTY) {
+    if (!dualLowErrorFlag) {
+      buffer += "Both batteries empty\n";
+      dualLowErrorFlag = true;
     }
   }
-  if (batt2On && batt2V < BATT_EMPTY && batt1Installed && !batt1On) {
-    digitalWrite(BATT_1_CTL, HIGH);
-    batt1On = true;
-    isrTimers.prevSwitchTime = micros();
-    Serial.println("Switched to batt 1!");
-    if (batt1V > BATT_EMPTY) {
-      digitalWrite(BATT_2_CTL, LOW);
-      batt2On = false;
-      isrTimers.prevSwitchTime = micros();
-    }
+  else {
+    dualLowErrorFlag = false;
   }
 
-  // // Errors
-  // if (batt1Installed && batt1V < BATT_EMPTY && batt2Installed && batt2V < BATT_EMPTY) {
-  //   if (!dualLowErrorFlag) {
-  //     buffer += "Both batteries empty\n";
-  //     dualLowErrorFlag = true;
-  //   }
-  // }
-  // else {
-  //   dualLowErrorFlag = false;
-  // }
-
-  // if (MCTherm.getTemperature() > MAX_TEMP) {
-  //   if (!MCThermErrorFlag) {
-  //     buffer += "MC Thermometer logged: " + (String)MCTherm.getTemperature() + "\n";
-  //     MCThermErrorFlag = true;
-  //   }
-  // }
-  // else {
-  //   MCThermErrorFlag = false;
-  // }
-
-  // if (RegTherm.getTemperature() > MAX_TEMP) {
-  //   if (!RegThermErrorFlag) {
-  //     buffer += "Reg Thermometer logged: " + (String)RegTherm.getTemperature() + "\n";
-  //     RegThermErrorFlag = true;
-  //   }
-  // }
-  // else {
-  //   RegThermErrorFlag = false;
-  // }
-
-    if (buzzerIntervalLive == BUZZ_FULL) {
-      digitalWrite(BUZZER, HIGH);
+  if (MCTherm.getTemperature() > MAX_TEMP) {
+    if (!MCThermErrorFlag) {
+      buffer += "MC Thermometer logged: " + (String)MCTherm.getTemperature() + "\n";
+      MCThermErrorFlag = true;
     }
-    else if (buzzerIntervalLive == BUZZ_OFF) {
-      digitalWrite(BUZZER, LOW);
-    }
-    else if ((micros() - prevBuzz) > buzzerIntervalLive) {
-      prevBuzz = micros();
-      buzzOn = !buzzOn;
-      digitalWrite(BUZZER, buzzOn);
-    }
+  }
+  else {
+    MCThermErrorFlag = false;
+  }
 
-  // if (micros() - sdPrevUpdate > 100)
-  //   updateSD();
+  if (RegTherm.getTemperature() > MAX_TEMP) {
+    if (!RegThermErrorFlag) {
+      buffer += "Reg Thermometer logged: " + (String)RegTherm.getTemperature() + "\n";
+      RegThermErrorFlag = true;
+    }
+  }
+  else {
+    RegThermErrorFlag = false;
+  }
+
+  if (buzzerIntervalLive == BUZZ_FULL) {
+    digitalWrite(BUZZER, HIGH);
+  }
+  else if (buzzerIntervalLive == BUZZ_OFF) {
+    digitalWrite(BUZZER, LOW);
+  }
+  else if ((micros() - prevBuzz) > buzzerIntervalLive) {
+    prevBuzz = micros();
+    buzzOn = !buzzOn;
+    digitalWrite(BUZZER, buzzOn);
+  }
+
+  if (micros() - sdPrevUpdate > 100)
+    updateSD();
 }
 
 
@@ -221,26 +240,30 @@ void updateSD(void) {
 }
 
 void batt1ISR() {
-  if (batt2Installed && (micros() - isrTimers.prevBatt1ISRTime) > ISR_GRACE && (micros() - isrTimers.prevSwitchTime) > ISR_GRACE) {
+  if (batt2Installed && !inSwitchingTimeout() && !ISR_Override) {
     digitalWrite(BATT_2_CTL, HIGH);
-    isrTimers.prevBatt1ISRTime = micros();
-    isrTimers.prevSwitchTime = micros();
+    digitalWrite(BATT_1_CTL, LOW);
+    batt2On = true;
+    prevSwitchTime = micros();
+    Serial.println("Batt 1 removed, switched to 2");
   }
   else {
     // fuck
-    file.println("Batt1 disconnect while Batt2 uninstalled");
+    file.println("Batt 1 disconnect while Batt2 uninstalled");
   }
 }
 
 void batt2ISR() {
-  if (batt1Installed && (micros() - isrTimers.prevBatt2ISRTime) > ISR_GRACE && (micros() - isrTimers.prevSwitchTime) > ISR_GRACE) {
+  if (batt1Installed && !inSwitchingTimeout() && !ISR_Override) {
     digitalWrite(BATT_1_CTL, HIGH);
-    isrTimers.prevBatt1ISRTime = micros();
-    isrTimers.prevSwitchTime = micros();
+    digitalWrite(BATT_2_CTL, LOW);
+    batt1On = true;
+    prevSwitchTime = micros();
+    Serial.println("Batt 2 removed, switched to 1");
   }
   else {
     // fuck
-    file.println("Batt2 disconnect while Batt1 uninstalled");
+    file.println("Batt 2 disconnect while Batt1 uninstalled");
   }
 }
 
@@ -255,4 +278,9 @@ void pollBatteries() {
 
   batt1Installed = batt1V > 0.5;
   batt2Installed = batt2V > 0.5;
+}
+
+
+bool inSwitchingTimeout() {
+  return (micros() - prevSwitchTime) < SWITCHING_GRACE;
 }

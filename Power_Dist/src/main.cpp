@@ -58,6 +58,38 @@ unsigned long prevBuzz;
 #define BUZZ_FULL             1
 #define BUZZ_OFF              0
 
+class Timer {
+  public:
+    Timer();
+    void set(unsigned long interval, unsigned long repetitionsRequired, bool onOff=true) {
+      _interval = interval;
+      _repetitionsRequired = repetitionsRequired * (onOff ? 2 : 1);
+      _repetitionsLive = 0;
+      _intervalMetFlag = false;
+      _prevTime = micros();
+    }
+    bool timeUp() {
+      if ((micros() - _prevTime) > _interval && !_intervalMetFlag && _repetitionsLive < _repetitionsRequired) {
+        _prevTime = micros();
+        _intervalMetFlag = true;
+        _repetitionsLive++;
+        return true;
+      }
+      else {
+        _intervalMetFlag = false;
+      }
+      return false;
+    }
+  private:
+    unsigned long _prevTime;
+    unsigned long _interval;
+    unsigned long _repetitionsRequired;
+    unsigned long _repetitionsLive;
+    unsigned long _intervalMetFlag;
+};
+
+Timer buzzerTimer;
+
 void updateSD();
 float calcVBatt(float vsense);
 void batt1ISR();
@@ -164,6 +196,10 @@ void loop() {
         digitalWrite(BATT_1_CTL, LOW);
         batt1On = false;
         prevSwitchTime = micros();
+        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 4);
+      }
+      else {
+        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
       }
       ISR_Override = false;
     }
@@ -173,10 +209,15 @@ void loop() {
       batt1On = true;
       prevSwitchTime = micros();
       Serial.println("Switched to batt 1!");
+
       if (batt1V > BATT_EMPTY) {
         digitalWrite(BATT_2_CTL, LOW);
         batt2On = false;
         prevSwitchTime = micros();
+        buzzerTimer.set(BUZZ_INTERVAL_RAPID, 4);
+      }
+      else {
+        buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
       }
       ISR_Override = false;
     }
@@ -214,17 +255,12 @@ void loop() {
     RegThermErrorFlag = false;
   }
 
-  if (buzzerIntervalLive == BUZZ_FULL) {
-    digitalWrite(BUZZER, HIGH);
-  }
-  else if (buzzerIntervalLive == BUZZ_OFF) {
-    digitalWrite(BUZZER, LOW);
-  }
-  else if ((micros() - prevBuzz) > buzzerIntervalLive) {
-    prevBuzz = micros();
-    buzzOn = !buzzOn;
+
+  if (buzzerTimer.timeUp()) {
     digitalWrite(BUZZER, buzzOn);
+    buzzOn = !buzzOn;
   }
+
 
   if (micros() - sdPrevUpdate > 100)
     updateSD();

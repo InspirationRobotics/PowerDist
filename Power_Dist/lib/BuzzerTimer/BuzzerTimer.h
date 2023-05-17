@@ -14,6 +14,7 @@ class BuzzerTimer {
     unsigned long _repetitionsRequired;
     unsigned long _repetitionsLive;
     unsigned long _intervalMetFlag;
+    bool _finished;
 };
 
 #endif

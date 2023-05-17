@@ -9,7 +9,7 @@
 
 // Pin Definitions
 #define BATT_1_VSENSE A1
-#define BATT_1_CURR A2
+#define BATT_1_CURR 2
 #define BATT_1_INT 4
 #define BATT_1_CTL 10
 
@@ -25,7 +25,7 @@
 
 // Other stuff
 #define BATT_EMPTY 12.8 // Empty voltage
-#define MAX_TEMP 40 // Temperature at which an error is logged in C
+#define MAX_TEMP 60 // Temperature at which an error is logged in C
 
 File file;
 String buffer;
@@ -39,6 +39,9 @@ bool batt2Installed;
 float batt1V;
 float batt2V;
 
+#define HIGH_CURRENT    50 //Amps
+bool batt1CurrErrorFlag;
+bool batt2CurrErrorFlag;
 bool dualLowErrorFlag;
 
 #define SWITCHING_GRACE 1000000 // isr trigger grace period in micros
@@ -66,26 +69,27 @@ void batt1ISR();
 void batt2ISR();
 void pollBatteries();
 bool inSwitchingTimeout();
+float getBatt1Curr();
+float getBatt2Curr();
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) {
-    ;
-  }
+  // while (!Serial) {
+  //   ;
+  // }
 
   pinMode(BATT_1_VSENSE, INPUT_PULLDOWN);
-  pinMode(BATT_1_CURR, INPUT);
+  pinMode(BATT_1_CURR, INPUT_PULLDOWN);
   pinMode(BATT_1_INT, INPUT_PULLUP);
   pinMode(BATT_1_CTL, OUTPUT);
 
   pinMode(BATT_2_VSENSE, INPUT_PULLDOWN);
-  pinMode(BATT_2_CURR, INPUT);
+  pinMode(BATT_2_CURR, INPUT_PULLDOWN);
   pinMode(BATT_2_INT, INPUT_PULLUP);
   pinMode(BATT_2_CTL, OUTPUT);
 
   pinMode(A0_SENSE, INPUT);
   pinMode(A5_SENSE, INPUT);
-  pinMode(A5_SENSE, BUZZER);
 
   // attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
   // attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
@@ -115,7 +119,10 @@ void setup() {
   prevSwitchTime = micros();
   ISR_Override = false;
 
+  batt1CurrErrorFlag = false;
+  batt2CurrErrorFlag = false;
   dualLowErrorFlag = false;
+
   MCThermErrorFlag = false;
   RegThermErrorFlag = false;
   buzzOn = true;
@@ -217,6 +224,8 @@ void loop() {
     dualLowErrorFlag = false;
   }
 
+
+  // Temperature
   if (MCTherm.getTemperature() > MAX_TEMP) {
     if (!MCThermErrorFlag) {
       buffer += "MC Thermometer logged: " + (String)MCTherm.getTemperature();
@@ -240,6 +249,29 @@ void loop() {
   }
 
 
+  // Current
+  if (getBatt1Curr() > HIGH_CURRENT) {
+    if (!batt1CurrErrorFlag) {
+      buffer += "Batt 1 current: " + (String)getBatt1Curr();
+      batt1CurrErrorFlag = true;
+      buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
+    }
+  }
+  else {
+    batt1CurrErrorFlag = false;
+  }
+  if (getBatt2Curr() > HIGH_CURRENT) {
+    if (!batt2CurrErrorFlag) {
+      buffer += "Batt 2 current: " + (String)getBatt2Curr();
+      batt2CurrErrorFlag = true;
+      buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
+    }
+  }
+  else {
+    batt1CurrErrorFlag = false;
+  }
+
+
   if (buzzerTimer.timeUp()) {
     digitalWrite(BUZZER, buzzOn);
     buzzOn = !buzzOn;
@@ -255,7 +287,6 @@ void loop() {
     sdPrevUpdate = micros();
   }
 
-  // Serial.println(analogRead((((BATT_1_CURR) / 1048) * 3.3) - 2.5) * 50);
 }
 
 void batt1ISR() {
@@ -302,4 +333,12 @@ void pollBatteries() {
 
 bool inSwitchingTimeout() {
   return (micros() - prevSwitchTime) < SWITCHING_GRACE;
+}
+
+float getBatt1Curr() {
+  return (((analogRead(BATT_1_CURR) / 1048) * 3.3) - 0.33) * 50;
+}
+
+float getBatt2Curr() {
+  return (((analogRead(BATT_2_CURR) / 1048) * 3.3) - 0.33) * 50;
 }

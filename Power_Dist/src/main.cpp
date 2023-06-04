@@ -22,6 +22,8 @@
 #define A5_SENSE A5
 #define BUZZER 11
 #define SD_CS 2
+#define SERIAL_1_RX 0
+#define SERIAL_1_TX 1
 
 // Other stuff
 #define BATT_EMPTY 12.8 // Empty voltage
@@ -47,6 +49,14 @@ bool dualLowErrorFlag;
 #define SWITCHING_GRACE 1000000 // isr trigger grace period in micros
 volatile bool ISR_Override;
 volatile unsigned long prevSwitchTime;
+
+// Kill switch = arming switch
+#define KILL_SWITCH_GRACE   1000000
+unsigned long armingTimer; 
+bool armingWaiting;
+bool armedWaitingState;
+bool armed;
+
 
 
 Adafruit_PCT2075 MCTherm;
@@ -90,6 +100,7 @@ void setup() {
 
   pinMode(A0_SENSE, INPUT);
   pinMode(A5_SENSE, INPUT);
+  pinMode(SERIAL_1_RX, INPUT_PULLUP);
 
   // attachInterrupt(digitalPinToInterrupt(BATT_1_INT), batt1ISR, FALLING);
   // attachInterrupt(digitalPinToInterrupt(BATT_2_INT), batt2ISR, FALLING);
@@ -118,6 +129,11 @@ void setup() {
 
   prevSwitchTime = micros();
   ISR_Override = false;
+
+  armingWaiting = false;
+  armingTimer = micros();
+  armed = digitalRead(SERIAL_1_RX);
+  armedWaitingState = false;
 
   batt1CurrErrorFlag = false;
   batt2CurrErrorFlag = false;
@@ -153,8 +169,38 @@ void loop() {
 
   pollBatteries();
 
+  // Handle the kill switch / arming and disarming
 
-  if (!inSwitchingTimeout()) {
+  if (((!digitalRead(SERIAL_1_RX) && armed) || (digitalRead(SERIAL_1_RX) && !armed)) && !armingWaiting) {
+    armingWaiting = true;
+    armedWaitingState = digitalRead(SERIAL_1_RX);
+    armingTimer = micros();
+  }
+
+  if (armingWaiting && (micros() - armingTimer) > KILL_SWITCH_GRACE) {
+    armingWaiting = false;
+    armingTimer = micros();
+    if (digitalRead(SERIAL_1_RX) == armedWaitingState) {
+      armed = !armed;
+      if (!armed) {
+        buffer += "Disarmed";
+        Serial.println("Disarmed");
+      }
+      else if (armed) {
+        buffer += "armed";
+        Serial.println("Armed");
+      }
+    }
+  }
+
+  if (!armed) {
+    digitalWrite(BATT_1_CTL, LOW);
+    batt1On = false;
+    digitalWrite(BATT_2_CTL, LOW);
+    batt2On = false;  
+  }
+
+  if (!inSwitchingTimeout() && armed) {
 
     // In the case that both batteries dropped low and then one was replaced
     if (batt1On && batt2On) {
@@ -171,6 +217,20 @@ void loop() {
         prevSwitchTime = micros();
         Serial.println("Selected Batt 2!");
         buffer += "Batt 2 was reinstalled charged; switching there";
+      }
+    }
+
+    // In the case that both batteries were off (disarmed)
+    if (!batt1On && !batt2On) {
+      if (batt1V > batt2V) {
+        digitalWrite(BATT_1_CTL, HIGH);
+        batt1On = true;
+        buffer += "Selected batt 1 after disarm";
+      }
+      else {
+        digitalWrite(BATT_2_CTL, HIGH);
+        batt2On = true;
+        buffer += "Selected batt 2 after disarm";
       }
     }
 

@@ -26,7 +26,7 @@
 #define SERIAL_1_TX 1
 
 // Other stuff
-#define BATT_EMPTY 12.8 // Empty voltage
+#define BATT_EMPTY 14 // Empty voltage
 #define MAX_TEMP 60 // Temperature at which an error is logged in C
 
 File file;
@@ -51,7 +51,7 @@ volatile bool ISR_Override;
 volatile unsigned long prevSwitchTime;
 
 // Kill switch = arming switch
-#define KILL_SWITCH_GRACE   1000000
+#define KILL_SWITCH_GRACE   500000
 unsigned long armingTimer; 
 bool armingWaiting;
 bool armedWaitingState;

@@ -114,18 +114,18 @@ void setup() {
   buffer = "";
 
   // Not equal to because there is a possibility that neither battery is actually plugged in (just mcu)
-  if (batt1V > batt2V) {
-    digitalWrite(BATT_1_CTL, HIGH);
-    batt1On = true;
-    Serial.println("Selected batt 1!");
-    buffer += "Selected batt 1 at init";
-  }
-  else {
-    digitalWrite(BATT_2_CTL, HIGH);
-    batt2On = true;
-    Serial.println("Selected batt 2!");
-    buffer += "Selected batt 2 at init";
-  }
+  // if (batt1V > batt2V) {
+  //   digitalWrite(BATT_1_CTL, HIGH);
+  //   batt1On = true;
+  //   Serial.println("Selected batt 1!");
+  //   buffer += "Selected batt 1 at init";
+  // }
+  // else {
+  //   digitalWrite(BATT_2_CTL, HIGH);
+  //   batt2On = true;
+  //   Serial.println("Selected batt 2!");
+  //   buffer += "Selected batt 2 at init";
+  // }
 
   prevSwitchTime = micros();
   ISR_Override = false;
@@ -171,26 +171,32 @@ void loop() {
 
   // Handle the kill switch / arming and disarming
 
-  if (((!digitalRead(SERIAL_1_RX) && armed) || (digitalRead(SERIAL_1_RX) && !armed)) && !armingWaiting) {
-    armingWaiting = true;
-    armedWaitingState = digitalRead(SERIAL_1_RX);
-    armingTimer = micros();
-  }
+  // if (((!digitalRead(SERIAL_1_RX) && armed) || (digitalRead(SERIAL_1_RX) && !armed)) && !armingWaiting) {
+  //   armingWaiting = true;
+  //   armedWaitingState = digitalRead(SERIAL_1_RX);
+  //   armingTimer = micros();
+  // }
 
-  if (armingWaiting && (micros() - armingTimer) > KILL_SWITCH_GRACE) {
-    armingWaiting = false;
+  // if (armingWaiting && (micros() - armingTimer) > KILL_SWITCH_GRACE) {
+  //   armingWaiting = false;
+  //   armingTimer = micros();
+  //   if (digitalRead(SERIAL_1_RX) == armedWaitingState) {
+  //     armed = !armed;
+  //     if (!armed) {
+  //       buffer += "Disarmed";
+  //       Serial.println("Disarmed");
+  //     }
+  //     else if (armed) {
+  //       buffer += "armed";
+  //       Serial.println("Armed");
+  //     }
+  //   }
+  // }
+
+
+  if ((micros() - armingTimer) > KILL_SWITCH_GRACE) {
+    armed = digitalRead(SERIAL_1_RX);
     armingTimer = micros();
-    if (digitalRead(SERIAL_1_RX) == armedWaitingState) {
-      armed = !armed;
-      if (!armed) {
-        buffer += "Disarmed";
-        Serial.println("Disarmed");
-      }
-      else if (armed) {
-        buffer += "armed";
-        Serial.println("Armed");
-      }
-    }
   }
 
   if (!armed) {

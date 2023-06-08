@@ -110,6 +110,8 @@ void setup() {
   pollBatteries();
   Serial.println("Read Batt 1:" + String(batt1V));
   Serial.println("Read Batt 2:" + String(batt2V));
+  digitalWrite(BATT_1_CTL, LOW);
+  digitalWrite(BATT_2_CTL, LOW);
 
   buffer = "";
 

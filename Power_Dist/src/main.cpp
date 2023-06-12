@@ -156,6 +156,8 @@ void setup() {
     SD.remove("log.txt");
   file = SD.open("log.txt", FILE_WRITE);
   
+  file.println("Onyx Unified PDB #2");
+
   // Initialize Thermometers
   if (!MCTherm.begin(0x48, &Wire)) {
     file.println("MCTherm init failed");

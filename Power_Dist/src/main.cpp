@@ -7,6 +7,7 @@
 
 #include <BuzzerTimer.h>
 
+
 // Pin Definitions
 #define BATT_1_VSENSE A1
 #define BATT_1_CURR 2
@@ -40,11 +41,23 @@ bool batt1Installed;
 bool batt2Installed;
 float batt1V;
 float batt2V;
+float batt1Curr;
+float batt2Curr;
+#define CURR_SENSE_INTERVAL     1000000
+#define CURR_SENSE_VOLTAGE_MULT 11
+#define CURR_SENSE_CURR_MULT    56.81818
+#define CURR_SENSE_VOLT_OFFSET  0
+#define CURR_SENSE_CURR_OFFSET  0.330
+unsigned long prevCurrSense;
+float batt1VFIFO[10];
+float batt2VFIFO[10];
+
 
 #define HIGH_CURRENT    50 //Amps
 bool batt1CurrErrorFlag;
 bool batt2CurrErrorFlag;
 bool dualLowErrorFlag;
+
 
 #define SWITCHING_GRACE 1000000 // isr trigger grace period in micros
 volatile bool ISR_Override;
@@ -56,7 +69,6 @@ unsigned long armingTimer;
 bool armingWaiting;
 bool armedWaitingState;
 bool armed;
-
 
 
 Adafruit_PCT2075 MCTherm;
@@ -108,10 +120,21 @@ void setup() {
   batt1On = false;
   batt2On = false;
   pollBatteries();
-  Serial.println("Read Batt 1:" + String(batt1V));
-  Serial.println("Read Batt 2:" + String(batt2V));
   digitalWrite(BATT_1_CTL, LOW);
   digitalWrite(BATT_2_CTL, LOW);
+
+
+  Serial.println("Read Batt 1:" + String(batt1V));
+  Serial.println("Read Batt 2:" + String(batt2V));
+
+  batt1Curr = 0;
+  batt2Curr = 0;
+  prevCurrSense = micros();
+  for (int x = 0; x < sizeof(batt1VFIFO) / sizeof(float); x++) {
+    batt1VFIFO[x] = batt1V;
+    batt2VFIFO[x] = batt2V;
+  }
+
 
   buffer = "";
 
@@ -320,7 +343,7 @@ void loop() {
 
 
   // Current
-  if (getBatt1Curr() > HIGH_CURRENT) {
+  if (batt1Curr > HIGH_CURRENT) {
     if (!batt1CurrErrorFlag) {
       buffer += "Batt 1 current: " + (String)getBatt1Curr();
       batt1CurrErrorFlag = true;
@@ -330,7 +353,7 @@ void loop() {
   else {
     batt1CurrErrorFlag = false;
   }
-  if (getBatt2Curr() > HIGH_CURRENT) {
+  if (batt2Curr > HIGH_CURRENT) {
     if (!batt2CurrErrorFlag) {
       buffer += "Batt 2 current: " + (String)getBatt2Curr();
       batt2CurrErrorFlag = true;
@@ -359,33 +382,33 @@ void loop() {
 
 }
 
-void batt1ISR() {
-  if (batt2Installed && !inSwitchingTimeout() && !ISR_Override) {
-    digitalWrite(BATT_2_CTL, HIGH);
-    digitalWrite(BATT_1_CTL, LOW);
-    batt2On = true;
-    prevSwitchTime = micros();
-    Serial.println("Batt 1 removed, switched to 2");
-  }
-  else {
-    // fuck
-    file.println("Batt 1 disconnect while Batt2 uninstalled");
-  }
-}
+// void batt1ISR() {
+//   if (batt2Installed && !inSwitchingTimeout() && !ISR_Override) {
+//     digitalWrite(BATT_2_CTL, HIGH);
+//     digitalWrite(BATT_1_CTL, LOW);
+//     batt2On = true;
+//     prevSwitchTime = micros();
+//     Serial.println("Batt 1 removed, switched to 2");
+//   }
+//   else {
+//     // fuck
+//     file.println("Batt 1 disconnect while Batt2 uninstalled");
+//   }
+// }
 
-void batt2ISR() {
-  if (batt1Installed && !inSwitchingTimeout() && !ISR_Override) {
-    digitalWrite(BATT_1_CTL, HIGH);
-    digitalWrite(BATT_2_CTL, LOW);
-    batt1On = true;
-    prevSwitchTime = micros();
-    Serial.println("Batt 2 removed, switched to 1");
-  }
-  else {
-    // fuck
-    file.println("Batt 2 disconnect while Batt1 uninstalled");
-  }
-}
+// void batt2ISR() {
+//   if (batt1Installed && !inSwitchingTimeout() && !ISR_Override) {
+//     digitalWrite(BATT_1_CTL, HIGH);
+//     digitalWrite(BATT_2_CTL, LOW);
+//     batt1On = true;
+//     prevSwitchTime = micros();
+//     Serial.println("Batt 2 removed, switched to 1");
+//   }
+//   else {
+//     // fuck
+//     file.println("Batt 2 disconnect while Batt1 uninstalled");
+//   }
+// }
 
 // Calculates the vsense pin voltage to the battery voltage
 float calcVBatt(float vsense) { 
@@ -398,6 +421,39 @@ void pollBatteries() {
 
   batt1Installed = batt1V > 0.5;
   batt2Installed = batt2V > 0.5;
+
+  if (micros() - prevCurrSense > CURR_SENSE_INTERVAL) {
+
+    uint8_t bufferLen = sizeof(batt1VFIFO) / sizeof(float);
+
+    float batt1Sum = 0;
+    float batt2Sum = 0;
+    for (int x = bufferLen - 1; x > 0; x--) {
+      batt1VFIFO[x] = batt1VFIFO[x - 1];
+      batt2VFIFO[x] = batt2VFIFO[x - 1];
+      batt1Sum += batt1VFIFO[x];
+      batt2Sum += batt2VFIFO[x];
+    }
+    batt1Sum += batt1V;
+    batt2Sum += batt2V;
+    batt1VFIFO[0] = batt1V;
+    batt2VFIFO[0] = batt2V;
+
+    float batt1VAvg = batt1Sum / bufferLen;
+    float batt2VAvg = batt2Sum / bufferLen;
+
+    // TEST LATER
+    float test1Voltage = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+    Serial.println("ACS measured V1: " + String(test1Voltage));
+    float test2Voltage = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+    Serial.println("ACS measured V1: " + String(test1Voltage));
+
+    float batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
+    float batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
+
+    prevCurrSense = micros();
+  }
+
 }
 
 
@@ -405,10 +461,10 @@ bool inSwitchingTimeout() {
   return (micros() - prevSwitchTime) < SWITCHING_GRACE;
 }
 
-float getBatt1Curr() {
-  return (((analogRead(BATT_1_CURR) / 1048) * 3.3) - 0.33) * 50;
-}
+// float getBatt1Curr() {
+//   return (((analogRead(BATT_1_CURR) / 1048) * 3.3) - 0.33) * 50;
+// }
 
-float getBatt2Curr() {
-  return (((analogRead(BATT_2_CURR) / 1048) * 3.3) - 0.33) * 50;
-}
+// float getBatt2Curr() {
+//   return (((analogRead(BATT_2_CURR) / 1048) * 3.3) - 0.33) * 50;
+// }

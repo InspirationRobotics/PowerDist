@@ -18,9 +18,8 @@ def getBattInfo(serial_device):
   if serial_device.in_waiting:
   
     output = serial_device.readline().decode('ascii').strip()
-    output = output[0:len(output) - 1]
-    incoming = output[output.rfind("["):].split(",")
-    data = {"Timestamp" : incoming[0][1:], "Battery 1" : incoming[1], "Battery 2" : incoming[2]}
+    incoming = output[output.rfind("[") : len(output) - 1].split(",")
+    data = {"Timestamp" : incoming[0], "Batt1V" : incoming[1], "Batt1Curr" : incoming[2], "Batt2V" : incoming[3], "Batt2Curr" : incoming[4]}
     return data
   else :
     return None

@@ -7,7 +7,7 @@
 
 #include <BuzzerTimer.h>
 
-#define ALLOW_SERIAL_HLC_TALK
+#define ALLOW_SERIAL_HLC_REPORT
 #define ALLOW_SERIAL_DEBUG
 
 // Pin Definitions
@@ -35,7 +35,11 @@
 File file;
 String buffer;
 
+#define SD_UPDATE_INTERVAL  1000000
 unsigned long sdPrevUpdate;
+
+#define HLC_REPORT_INTERVAL 1000000
+unsigned long hlcReportPrevUpdate;
 
 volatile bool batt1On;
 volatile bool batt2On;
@@ -65,6 +69,7 @@ bool dualLowErrorFlag;
 volatile bool ISR_Override;
 volatile unsigned long prevSwitchTime;
 
+
 // Kill switch = arming switch
 #define KILL_SWITCH_GRACE   500000
 unsigned long armingTimer; 
@@ -88,6 +93,7 @@ unsigned long prevBuzz;
 
 BuzzerTimer buzzerTimer;
 
+float getPinVolt(uint8_t pin);
 float calcVBatt(float vsense);
 void batt1ISR();
 void batt2ISR();
@@ -95,9 +101,10 @@ void pollBatteries();
 bool inSwitchingTimeout();
 float getBatt1Curr();
 float getBatt2Curr();
+void hlcReport();
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(112500);
   // while (!Serial) {
   //   ;
   // }
@@ -134,8 +141,8 @@ void setup() {
   batt2Curr = 0;
   prevCurrSense = micros();
   for (int x = 0; x < sizeof(batt1VFIFO) / sizeof(float); x++) {
-    batt1VFIFO[x] = batt1V;
-    batt2VFIFO[x] = batt2V;
+    batt1VFIFO[x] = getPinVolt(BATT_1_CURR);
+    batt2VFIFO[x] = getPinVolt(BATT_2_CURR);
   }
 
 
@@ -160,7 +167,7 @@ void setup() {
 
   armingWaiting = false;
   armingTimer = micros();
-  armed = digitalRead(SERIAL_1_RX);
+  armed = false;
   armedWaitingState = false;
 
   batt1CurrErrorFlag = false;
@@ -173,6 +180,7 @@ void setup() {
   prevBuzz = micros();
 
   sdPrevUpdate = micros();
+  hlcReportPrevUpdate = micros();
   
 
   if (!SD.begin(SD_CS)) {
@@ -200,6 +208,10 @@ void setup() {
 void loop() {
 
   pollBatteries();
+
+#ifdef ALLOW_SERIAL_HLC_REPORT
+  hlcReport();
+#endif
 
   // Handle the kill switch / arming and disarming
 
@@ -384,7 +396,7 @@ void loop() {
   }
 
 
-  if (micros() - sdPrevUpdate > 1000000) {
+  if (micros() - sdPrevUpdate > SD_UPDATE_INTERVAL) {
     if (buffer.length() > 0) {
       file.println(buffer);
       file.flush();
@@ -423,14 +435,18 @@ void loop() {
 //   }
 // }
 
+float getPinVolt(uint8_t pin) {
+  return (analogRead(pin) / 1048) * 3.3;
+}
+
 // Calculates the vsense pin voltage to the battery voltage
 float calcVBatt(float vsense) { 
   return vsense / (2.54 / 14.94);
 }
 
 void pollBatteries() {
-  batt1V = calcVBatt(3.3 * analogRead(BATT_1_VSENSE) / 1048);
-  batt2V = calcVBatt(3.3 * analogRead(BATT_2_VSENSE) / 1048);
+  batt1V = calcVBatt(getPinVolt(BATT_1_VSENSE));
+  batt2V = calcVBatt(getPinVolt(BATT_2_VSENSE));
 
   batt1Installed = batt1V > 0.5;
   batt2Installed = batt2V > 0.5;
@@ -447,8 +463,8 @@ void pollBatteries() {
       batt1Sum += batt1VFIFO[x];
       batt2Sum += batt2VFIFO[x];
     }
-    batt1Sum += batt1V;
-    batt2Sum += batt2V;
+    batt1Sum += getPinVolt(BATT_1_CURR);
+    batt2Sum += getPinVolt(BATT_2_CURR);
     batt1VFIFO[0] = batt1V;
     batt2VFIFO[0] = batt2V;
 
@@ -465,6 +481,8 @@ void pollBatteries() {
     Serial.println("ACS measured V1: " + String(test1Voltage));
 #endif
 
+// refer to https://github.dev/ArduPilot/ardupilot ; /libraries/AP_BattMonitor/AP_BattMonitor_Analog.cpp
+
     float batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
     float batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
 
@@ -476,6 +494,15 @@ void pollBatteries() {
 
 bool inSwitchingTimeout() {
   return (micros() - prevSwitchTime) < SWITCHING_GRACE;
+}
+
+void hlcReport() {
+  if (micros() - hlcReportPrevUpdate > HLC_REPORT_INTERVAL) {
+    char report[100];
+    sprintf(report, "[%lu,%s,%s,%s,%s]", millis(), String(batt1V, 3).c_str(), String(batt1Curr, 3).c_str(), String(batt2V, 3).c_str(), String(batt2Curr, 3).c_str()); 
+    Serial.write(report);
+    memset(report, 0, sizeof(buffer));
+  }
 }
 
 // float getBatt1Curr() {

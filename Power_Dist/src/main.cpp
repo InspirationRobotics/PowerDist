@@ -7,6 +7,8 @@
 
 #include <BuzzerTimer.h>
 
+#define ALLOW_SERIAL_HLC_TALK
+#define ALLOW_SERIAL_DEBUG
 
 // Pin Definitions
 #define BATT_1_VSENSE A1
@@ -123,9 +125,10 @@ void setup() {
   digitalWrite(BATT_1_CTL, LOW);
   digitalWrite(BATT_2_CTL, LOW);
 
-
+#ifdef ALLOW_SERIAL_DEBUG
   Serial.println("Read Batt 1:" + String(batt1V));
   Serial.println("Read Batt 2:" + String(batt2V));
+#endif
 
   batt1Curr = 0;
   batt2Curr = 0;
@@ -173,7 +176,9 @@ void setup() {
   
 
   if (!SD.begin(SD_CS)) {
+#ifdef ALLOW_SERIAL_DEBUG
     Serial.println("Connection to SD Card failed");
+#endif
   }
   if (SD.exists("log.txt"))
     SD.remove("log.txt");
@@ -241,14 +246,18 @@ void loop() {
         digitalWrite(BATT_2_CTL, LOW);
         batt2On = false;
         prevSwitchTime = micros();
+#ifdef ALLOW_SERIAL_DEBUG
         Serial.println("Selected Batt 1!");
+#endif
         buffer += "Batt 1 was reinstalled charged; switching there";
       }
       if (batt2V > BATT_EMPTY) {
         digitalWrite(BATT_1_CTL, LOW);
         batt1On = false;
         prevSwitchTime = micros();
+#ifdef ALLOW_SERIAL_DEBUG
         Serial.println("Selected Batt 2!");
+#endif
         buffer += "Batt 2 was reinstalled charged; switching there";
       }
     }
@@ -272,7 +281,9 @@ void loop() {
       digitalWrite(BATT_2_CTL, HIGH);
       batt2On = true;
       prevSwitchTime = micros();
+#ifdef ALLOW_SERIAL_DEBUG
       Serial.println("Switched to batt 2!");
+#endif
       buffer += "Switching to batt 2";
       if (batt2V > BATT_EMPTY) {
         digitalWrite(BATT_1_CTL, LOW);
@@ -290,7 +301,9 @@ void loop() {
       digitalWrite(BATT_1_CTL, HIGH);
       batt1On = true;
       prevSwitchTime = micros();
+#ifdef ALLOW_SERIAL_DEBUG
       Serial.println("Switched to batt 1!");
+#endif
       buffer += "Switching to batt 1";
       if (batt1V > BATT_EMPTY) {
         digitalWrite(BATT_2_CTL, LOW);
@@ -444,9 +457,13 @@ void pollBatteries() {
 
     // TEST LATER
     float test1Voltage = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+#ifdef ALLOW_SERIAL_DEBUG
     Serial.println("ACS measured V1: " + String(test1Voltage));
+#endif
     float test2Voltage = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+#ifdef ALLOW_SERIAL_DEBUG
     Serial.println("ACS measured V1: " + String(test1Voltage));
+#endif
 
     float batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
     float batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;

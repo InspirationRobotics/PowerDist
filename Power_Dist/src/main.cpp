@@ -370,7 +370,7 @@ void loop() {
   // Current
   if (batt1Curr > HIGH_CURRENT) {
     if (!batt1CurrErrorFlag) {
-      buffer += "Batt 1 current: " + (String)getBatt1Curr();
+      buffer += "Batt 1 current: " + (String)batt1Curr;
       batt1CurrErrorFlag = true;
       buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
     }
@@ -380,7 +380,7 @@ void loop() {
   }
   if (batt2Curr > HIGH_CURRENT) {
     if (!batt2CurrErrorFlag) {
-      buffer += "Batt 2 current: " + (String)getBatt2Curr();
+      buffer += "Batt 2 current: " + (String)batt2Curr;
       batt2CurrErrorFlag = true;
       buzzerTimer.set(BUZZ_INTERVAL_RAPID, 20);
     }
@@ -463,28 +463,28 @@ void pollBatteries() {
       batt1Sum += batt1VFIFO[x];
       batt2Sum += batt2VFIFO[x];
     }
-    batt1Sum += getPinVolt(BATT_1_CURR);
-    batt2Sum += getPinVolt(BATT_2_CURR);
-    batt1VFIFO[0] = batt1V;
-    batt2VFIFO[0] = batt2V;
+    batt1VFIFO[0] = getPinVolt(BATT_1_CURR);
+    batt2VFIFO[0] = getPinVolt(BATT_2_CURR);
+    batt1Sum += batt1VFIFO[0];
+    batt2Sum += batt2VFIFO[0];
 
     float batt1VAvg = batt1Sum / bufferLen;
     float batt2VAvg = batt2Sum / bufferLen;
 
     // TEST LATER
-    float test1Voltage = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
-#ifdef ALLOW_SERIAL_DEBUG
-    Serial.println("ACS measured V1: " + String(test1Voltage));
-#endif
-    float test2Voltage = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
-#ifdef ALLOW_SERIAL_DEBUG
-    Serial.println("ACS measured V1: " + String(test1Voltage));
-#endif
+//     float test1Voltage = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+// #ifdef ALLOW_SERIAL_DEBUG
+//     Serial.println("ACS measured V1: " + String(test1Voltage));
+// #endif
+//     float test2Voltage = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_VOLTAGE_MULT;
+// #ifdef ALLOW_SERIAL_DEBUG
+//     Serial.println("ACS measured V1: " + String(test1Voltage));
+// #endif
 
 // refer to https://github.dev/ArduPilot/ardupilot ; /libraries/AP_BattMonitor/AP_BattMonitor_Analog.cpp
 
-    float batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
-    float batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
+    batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
+    batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
 
     prevCurrSense = micros();
   }
@@ -502,6 +502,7 @@ void hlcReport() {
     sprintf(report, "[%lu,%s,%s,%s,%s]", millis(), String(batt1V, 3).c_str(), String(batt1Curr, 3).c_str(), String(batt2V, 3).c_str(), String(batt2Curr, 3).c_str()); 
     Serial.write(report);
     memset(report, 0, sizeof(buffer));
+    hlcReportPrevUpdate = micros();
   }
 }
 

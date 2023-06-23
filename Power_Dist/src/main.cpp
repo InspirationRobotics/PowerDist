@@ -38,7 +38,7 @@ String buffer;
 #define SD_UPDATE_INTERVAL  1000000
 unsigned long sdPrevUpdate;
 
-#define HLC_REPORT_INTERVAL 1000000
+#define HLC_REPORT_INTERVAL 5000000
 unsigned long hlcReportPrevUpdate;
 
 volatile bool batt1On;
@@ -51,7 +51,7 @@ float batt1Curr;
 float batt2Curr;
 #define CURR_SENSE_INTERVAL     1000000
 #define CURR_SENSE_VOLTAGE_MULT 11
-#define CURR_SENSE_CURR_MULT    56.81818
+#define CURR_SENSE_CURR_MULT    37.8788
 #define CURR_SENSE_VOLT_OFFSET  0
 #define CURR_SENSE_CURR_OFFSET  0.330
 unsigned long prevCurrSense;
@@ -203,6 +203,8 @@ void setup() {
 
   buzzerTimer.set(BUZZ_INTERVAL_SLOW, 4);
   file.flush();
+
+  Serial.println("Hello");
 }
 
 void loop() {
@@ -436,7 +438,7 @@ void loop() {
 // }
 
 float getPinVolt(uint8_t pin) {
-  return (analogRead(pin) / 1048) * 3.3;
+  return (analogRead(pin) * 3.3) / 1048;
 }
 
 // Calculates the vsense pin voltage to the battery voltage
@@ -481,10 +483,11 @@ void pollBatteries() {
 //     Serial.println("ACS measured V1: " + String(test1Voltage));
 // #endif
 
-// refer to https://github.dev/ArduPilot/ardupilot ; /libraries/AP_BattMonitor/AP_BattMonitor_Analog.cpp
+// refer to https://github.dev/ArduPilot/ardupilot ; /libraries/AP_BattMonitor/AP_BattMonitor_Analog.cpp for code implementation, and 
+// https://github.com/mavlink/qgroundcontrol/blob/master/src/AutoPilotPlugins/APM/APMPowerComponent.qml for constants
 
-    batt1Curr = (batt1VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
-    batt2Curr = (batt2VAvg - CURR_SENSE_VOLT_OFFSET) * CURR_SENSE_CURR_MULT;
+    batt1Curr = (batt1VAvg - CURR_SENSE_CURR_OFFSET) * CURR_SENSE_CURR_MULT;
+    batt2Curr = (batt2VAvg - CURR_SENSE_CURR_OFFSET) * CURR_SENSE_CURR_MULT;
 
     prevCurrSense = micros();
   }
@@ -499,7 +502,7 @@ bool inSwitchingTimeout() {
 void hlcReport() {
   if (micros() - hlcReportPrevUpdate > HLC_REPORT_INTERVAL) {
     char report[100];
-    sprintf(report, "[%lu,%s,%s,%s,%s]", millis(), String(batt1V, 3).c_str(), String(batt1Curr, 3).c_str(), String(batt2V, 3).c_str(), String(batt2Curr, 3).c_str()); 
+    sprintf(report, "[%lu,%d,%s,%s,%s,%s,%s,%s]", millis(), (int)armed, String(batt1V, 3).c_str(), String(batt1Curr, 3).c_str(), String(batt2V, 3).c_str(), String(batt2Curr, 3).c_str(), String(RegTherm.getTemperature(), 3).c_str(), String(MCTherm.getTemperature(), 3).c_str()); 
     Serial.write(report);
     memset(report, 0, sizeof(buffer));
     hlcReportPrevUpdate = micros();

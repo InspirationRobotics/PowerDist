@@ -19,7 +19,7 @@ def getBattInfo(serial_device):
   
     output = serial_device.readline().decode('ascii').strip()
     incoming = output[output.rfind("[") : len(output) - 1].split(",")
-    data = {"Timestamp" : incoming[0], "Batt1V" : incoming[1], "Batt1Curr" : incoming[2], "Batt2V" : incoming[3], "Batt2Curr" : incoming[4]}
+    data = {"Timestamp" : incoming[0], "Armed" : incoming[1], "Batt1V" : incoming[2], "Batt1Curr" : incoming[3], "Batt2V" : incoming[4], "Batt2Curr" : incoming[5], "RegTherm" : incoming[6], "MCTherm" : incoming[7]}
     return data
   else :
     return None

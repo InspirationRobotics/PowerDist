@@ -18,7 +18,7 @@ def getBattInfo(serial_device):
   if serial_device.in_waiting:
   
     output = serial_device.readline().decode('ascii').strip()
-    incoming = output[output.rfind("[") : len(output) - 1].split(",")
+    incoming = output[output.rfind("[") + 1 : len(output) - 1].split(",")
     data = {"Timestamp" : incoming[0], "Armed" : incoming[1], "Batt1V" : incoming[2], "Batt1Curr" : incoming[3], "Batt2V" : incoming[4], "Batt2Curr" : incoming[5], "RegTherm" : incoming[6], "MCTherm" : incoming[7]}
     return data
   else :
@@ -30,7 +30,9 @@ def main():
   serial_device = establishPort()
 
   while True: 
-    getBattInfo(serial_device)
+    x = getBattInfo(serial_device)
+    if x:
+      print(x)
 
 
 if __name__ == "__main__":
